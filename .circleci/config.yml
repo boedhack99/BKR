@@ -17,7 +17,7 @@ commands:
             git config --global user.name "boedhack99"
             git config --global credential.helper "cache --timeout=7200"
             echo "git identity setup successfully!"
-            git clone https://github.com/boedhack99/scripts.git scripts --depth=1 --branch master
+            git clone https://github.com/boedhack99/scripts.git --depth=1 --branch master
             bash scripts/setup/android_build_env.sh >/dev/null
             bash scripts/setup/install_android_sdk.sh >/dev/null
   setup_repos:
