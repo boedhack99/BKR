@@ -4,6 +4,8 @@ jobs:
     working_directory: ~/tmp
     docker:
       - image: apon77/aosp:latest
+    environment:
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - checkout
       - run:
@@ -12,7 +14,7 @@ jobs:
       - run:
           name: Building Environment
           command: |
-            apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y
+            DEBIAN_FRONTEND=noninteractive apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y
             echo "Configuring git"
             git config --global user.email "$GIT_EMAIL"
             git config --global user.name "boedhack99"
