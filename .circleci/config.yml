@@ -1,19 +1,23 @@
 version: 2.1
 jobs:
   build:
+    working_directory: ~/tmp
     docker:
-      - image: fr3akyphantom/droid-builder:latest
+      - image: cimg/android:29.0.0
+    environment:
+      DEBIAN_FRONTEND: noninteractive
     steps:
+      - checkout
       - run:
-          name: ROM build
+          name: checking storage
+          command: df -h
+      - run:
+          name: build environment
           command: |
-            lshw -short
-            df -h 
-            echo "=============================================================="
-           sudo apt-get -y update && sudo apt-get -y install git openjdk-8-jdk wget p7zip-full p7zip-rar python python3 rsync sshpass adb autoconf automake axel bc bison build-essential ccache clang cmake expat fastboot flex g++ g++-multilib gawk gcc gcc-multilib git gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev '^liblz4-.*' '^liblzma.*' libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils '^lzma.*' lzop maven ncftp ncurses-dev patch patchelf pkg-config pngcrush pngquant python2.7 python-all-dev re2c schedtool squashfs-tools subversion texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl apt-utils 
-           sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
-           sudo chmod a+rx /usr/local/bin/repo
-           mkdir tmp && cd tmp
+            DEBIAN_FRONTEND=noninteractive apt-get --quiet update && apt-get --quiet install git aria2 apt-utils -y
+            git clone https://github.com/akhilnarang/scripts --depth=1 --branch master
+            bash scripts/setup/android_build_env.sh >/dev/null
+            bash scripts/setup/install_android_sdk.sh >/dev/null
       - run:
           name: Clone
           command: |
