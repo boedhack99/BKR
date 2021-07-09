@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/tmp
     docker:
-      - image: cimg/base:2021.04
+      - image: cimg/android
     environment:
       DEBIAN_FRONTEND: noninteractive
     steps:
