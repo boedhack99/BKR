@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/tmp
     docker:
-      - image: fr3akyphantom/droid-builder:lastest
+      - image: fr3akyphantom/droid-builder:latest
     environment:
       DEBIAN_FRONTEND: noninteractive
     steps:
