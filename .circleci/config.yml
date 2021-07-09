@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/tmp
     docker:
-      - image: fr3akyphantom/droid-builder:latest
+      - image: cimg/android:29.0.0
     environment:
       DEBIAN_FRONTEND: noninteractive
     steps:
@@ -32,10 +32,10 @@ jobs:
       - run:
           name: Start Building ROM
           command: |
-            . build/envsetup.sh
+            source build/envsetup.sh
             lunch lineage_mojito-userdebug
             export ALLOWS_MISSING_DEPENDENCIES="true"
-            make sepolicy
+            mka bacon
       - store_artifacts:
           path: out/target/product/mojito/ROM_test.zip
           destination: ROM_test.zip
