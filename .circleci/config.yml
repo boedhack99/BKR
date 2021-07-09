@@ -1,15 +1,8 @@
 version: 2.1
-workflows:
-  rom:
-    jobs:
-      - build:
-          context: rom
-
 jobs:
   build:
-    working_directory: ~/tmp
     docker:
-      - image: ubuntu-2004:202010-01
+      - image: fr3akyphantom/droid-builder:latest
     steps:
       - checkout
       - run:
