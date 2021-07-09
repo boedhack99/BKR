@@ -1,4 +1,4 @@
 . build/envsetup.sh
 lunch lineage_mojito-userdebug
-mka sepolicy
+make sepolicy
 #mka bacon
