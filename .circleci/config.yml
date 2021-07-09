@@ -2,8 +2,10 @@ version: 2.1
 jobs:
   build:
     working_directory: ~/tmp
-    machine:
-      - image: ubuntu-2004:202010-01
+    docker:
+      - image: cimg/base:2021.04
+    environment:
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - checkout
       - run:
