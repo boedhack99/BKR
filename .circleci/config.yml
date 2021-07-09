@@ -11,7 +11,7 @@ commands:
       - run:
           name: Build Environment
           command: |
-            apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y
+            apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y wget
             echo "Configuring git"
             git config --global user.email "$GIT_EMAIL"
             git config --global user.name "boedhack99"
@@ -39,7 +39,7 @@ commands:
             source build/envsetup.sh
             lunch lineage_mojito-userdebug
             export ALLOWS_MISSING_DEPENDENCIES="true"
-            mka bacon
+            make sepolicy
             BUILDFILE=$(find $(pwd)/out/target/product/mojito/lineage-18.1-* 2>/dev/null)
             UPLOAD_PATH=$(pwd)/out/target/product/mojito/upload/
             mkdir $UPLOAD_PATH && cp $BUILDFILE $UPLOAD_PATH
