@@ -21,14 +21,14 @@ jobs:
           command: |
             repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android.git -b lineage-18.1 -g default,-device,-mips,-darwin,-notdefault
             git clone https://github.com/boedhack/local_manifest.git --depth=1 -b 11 .repo/local_manifests
-            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j32
+            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8
       - run:
           name: Start Building ROM
           command: |
             . build/envsetup.sh
             lunch lineage_mojito-userdebug
             export ALLOWS_MISSING_DEPENDENCIES="true"
-            make -j8 sepolicy
+            make -j4 sepolicy
       - store_artifacts:
           path: out/target/product/mojito/ROM_test.zip
           destination: ROM_test.zip
