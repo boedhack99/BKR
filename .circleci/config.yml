@@ -11,7 +11,7 @@ commands:
       - run:
           name: Build Environment
           command: |
-            apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y wget
+            apt-get --quiet update && apt-get --quiet install git aria2 apt-utils curl openjdk-8-jdk -y wget
             echo "Configuring git"
             git config --global user.email "$GIT_EMAIL"
             git config --global user.name "boedhack99"
