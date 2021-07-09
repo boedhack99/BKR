@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Checking Free Space
-          command: df -h
+          command: df -h && echo "Cores = $(nproc --all)" && echo "Ram = $(free -h)"
       - run:
           name: Building Environment
           command: |
