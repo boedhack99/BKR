@@ -3,4 +3,3 @@ cd ~/tmp
 lunch lineage_mojito-userdebug
 mka sepolicy
 #mka bacon
- 
