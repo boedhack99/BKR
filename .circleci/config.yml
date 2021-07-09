@@ -1,41 +1,69 @@
 version: 2.1
-jobs:
-  build:
-    working_directory: ~/tmp
-    docker:
-      - image: apon77/aosp:los
-    environment:
-      DEBIAN_FRONTEND: noninteractive
+
+commands:
+  check_system:
     steps:
-      - checkout
       - run:
-          name: Checking Free Space
-          command: df -h
+          name: Check system
+          command: df -h && echo "Cores = $(nproc --all)"
+  setup_env:
+    steps:
       - run:
-          name: Building Environment
+          name: Setup environment
           command: |
-            DEBIAN_FRONTEND=noninteractive apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y
+            apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y
             echo "Configuring git"
             git config --global user.email "$GIT_EMAIL"
             git config --global user.name "boedhack99"
             git config --global credential.helper "cache --timeout=7200"
             echo "git identity setup successfully!"
-            git clone https://github.com/boedhack99/scripts --depth=1 --branch master
+            git clone https://github.com/boedhack99/scripts.git scripts --depth=1 --branch master
             bash scripts/setup/android_build_env.sh >/dev/null
             bash scripts/setup/install_android_sdk.sh >/dev/null
+  setup_repos:
+    steps:
       - run:
-          name: Cloning Files
+          name: Setup repos
+          ## LineageOS
           command: |
+            echo "Current dir = $(pwd)"
             repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android.git -b lineage-18.1 -g default,-device,-mips,-darwin,-notdefault
             git clone https://github.com/boedhack/local_manifest.git --depth=1 -b 11 .repo/local_manifests
             repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8
+
+  build:
+    steps:
       - run:
-          name: Start Building ROM
+          name: Build
           command: |
             source build/envsetup.sh
             lunch lineage_mojito-userdebug
             export ALLOWS_MISSING_DEPENDENCIES="true"
             mka bacon
+            BUILDFILE=$(find $(pwd)/out/target/product/mojito/lineage-18.1-* 2>/dev/null)
+            UPLOAD_PATH=$(pwd)/out/target/product/mojito/upload/
+            mkdir $UPLOAD_PATH && cp $BUILDFILE $UPLOAD_PATH
+
+executors:
+  machine-executor:
+    machine:
+      image: ubuntu-2004:202010-01
+
+  docker-executor:
+    docker:
+      - image: ubuntu:focal
+
+jobs:
+  build:
+    executor: docker-executor
+    working_directory: ~/tmp
+    environment:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - checkout
+      - check_system
+      - setup_env
+      - setup_repos
+      - build
       - store_artifacts:
-          path: out/target/product/mojito/ROM_test.zip
-          destination: ROM_test.zip
+          path: out/target/product/mojito/upload/
