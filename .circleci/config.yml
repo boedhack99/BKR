@@ -4,12 +4,12 @@ commands:
   check_system:
     steps:
       - run:
-          name: Check system
+          name: Checking Storage Space
           command: df -h && echo "Cores = $(nproc --all)"
   setup_env:
     steps:
       - run:
-          name: Setup environment
+          name: Build Environment
           command: |
             apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y
             echo "Configuring git"
@@ -23,7 +23,7 @@ commands:
   setup_repos:
     steps:
       - run:
-          name: Setup repos
+          name: Clone Repo Trees
           ## LineageOS
           command: |
             echo "Current dir = $(pwd)"
@@ -34,7 +34,7 @@ commands:
   build:
     steps:
       - run:
-          name: Build
+          name: Building Now
           command: |
             source build/envsetup.sh
             lunch lineage_mojito-userdebug
