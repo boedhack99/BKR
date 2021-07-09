@@ -9,10 +9,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: checking storage
+          name: Checking Free Space
           command: df -h
       - run:
-          name: build environment
+          name: Building Environment
           command: |
             DEBIAN_FRONTEND=noninteractive apt-get --quiet update && apt-get --quiet install git aria2 apt-utils openjdk-8-jdk -y
             echo "Configuring git"
@@ -24,14 +24,18 @@ jobs:
             bash scripts/setup/android_build_env.sh >/dev/null
             bash scripts/setup/install_android_sdk.sh >/dev/null
       - run:
-          name: Clone
+          name: Cloning Files
           command: |
             repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android.git -b lineage-18.1 -g default,-device,-mips,-darwin,-notdefault
             git clone https://github.com/boedhack/local_manifest.git --depth=1 -b 11 .repo/local_manifests
             repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8
       - run:
-          name: Build
-          command: ./build.sh
+          name: Start Building ROM
+          command: |
+            . build/envsetup.sh
+            lunch lineage_mojito-userdebug
+            export ALLOWS_MISSING_DEPENDENCIES="true"
+            make sepolicy
       - store_artifacts:
-          path: out/target/product/mojito/test.zip
-          destination: test.zip
+          path: out/target/product/mojito/*.zip
+          destination: *.zip
