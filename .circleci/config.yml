@@ -37,5 +37,5 @@ jobs:
             export ALLOWS_MISSING_DEPENDENCIES="true"
             make sepolicy
       - store_artifacts:
-          path: out/target/product/mojito/*.zip
-          destination: *.zip
+          path: out/target/product/mojito/ROM_test.zip
+          destination: ROM_test.zip
