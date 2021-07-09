@@ -1,11 +1,8 @@
 version: 2.1
 jobs:
   build:
-    working_directory: ~/tmp
     docker:
       - image: fr3akyphantom/droid-builder:latest
-    environment:
-      DEBIAN_FRONTEND: noninteractive
     steps:
       - checkout
       - run:
@@ -18,10 +15,9 @@ jobs:
             git config --global user.email "$GIT_EMAIL"
             git config --global user.name "boedhack99"
             git config --global color.ui "true"
-            git config --global credential.helper "cache --timeout=7200"
             echo "git identity setup successfully!"
       - run:
-          name: Cloning Files
+          name: Cloning Repos Trees
           command: |
             repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android.git -b lineage-18.1 -g default,-device,-mips,-darwin,-notdefault
             git clone https://github.com/boedhack/local_manifest.git --depth=1 -b 11 .repo/local_manifests
