@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/tmp
     docker:
-      - image: circleci/android
+      - image: cimg/android:30.0
     environment:
       DEBIAN_FRONTEND: noninteractive
     steps:
