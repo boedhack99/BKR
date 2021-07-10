@@ -3,37 +3,39 @@ jobs:
   build:
     docker:
       - image: fr3akyphantom/droid-builder:latest
-    environment:
-      ROM_NAME: 'LineageOS'
-      VERSION: 'lineage-18.1'
-      VENDOR: 'xiaomi'
-      CODENAME: 'mojito'
-      CHANGELOG: |
-        - Initial Build
     working_directory: /home/builder/
     steps:
+      - checkout
       - run:
-          name: Compile
+          name: Checking Free Space
+          command: df -h && echo "Cores = $(nproc --all)" && echo "Ram = $(free -h)"
+      - run:
+          name: Building environment
           command: |
-            lshw -short
-            df -h 
-            echo "=============================================================="
-           apt-get -y update && apt-get -y install git openjdk-8-jdk wget p7zip-full p7zip-rar python python3 rsync sshpass adb autoconf automake axel bc bison build-essential ccache clang cmake expat fastboot flex g++ g++-multilib gawk gcc gcc-multilib git gnupg gperf htop imagemagick lib32ncurses5-dev lib32z1-dev libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev '^liblz4-.*' '^liblzma.*' libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils '^lzma.*' lzop maven ncftp ncurses-dev patch patchelf pkg-config pngcrush pngquant python2.7 python-all-dev re2c schedtool squashfs-tools subversion texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl apt-utils 
-           curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
-           chmod a+rx /usr/local/bin/repo
-           mkdir android && cd android
-           repo init -u git://github.com/LineageOS/android.git -b lineage-18.1 --depth=1 --groups=all,-notdefault,-device,-darwin,-x86,-mips
-           repo sync --force-sync -j69
-           git clone --depth=1 --single-branch https://github.com/boedhack99/dxm -b R device/xiaomi/mojito
-           git clone --depth=1 --single-branch https://github.com/boedhack/vendor_mojito -b R vendor/xiaomi/rosy
-           git clone --depth=1 --single-branch https://github.com/PixelExperience-Devices/kernel_xiaomi_mojito -b eleven kenrel/xiaomi/mojito
-           . build/envsetup.sh && lunch lineage_mojito-userdebug && mka sepolicy
-workflows:
-  version: 2.1
-  build_and_test:
-    jobs:
-      - build:
-          filters:
-            branches:
-              only: 'lineage-18.1'
-          context: org-global
+            echo "Configuring git"
+            git config --global user.email "$GIT_EMAIL"
+            git config --global user.name "boedhack99"
+            git config --global color.ui "true"
+            echo "git identity setup successfully!"
+      - run:
+          name: Cloning repo
+          command: |
+            mkdir android && cd android
+            repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android.git -b lineage-18.1 -g default,-device,-mips,-darwin,-notdefault
+            git clone https://github.com/boedhack/local_manifest.git --depth=1 -b 11 .repo/local_manifests
+            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j69
+      - run:
+          name: Building
+          command: |
+            export CCACHE_DIR=~/ccache/$rom_name/$device
+            export CCACHE_EXEC=$(which ccache)
+            export USE_CCACHE=1
+            ccache -M 10G
+            ccache -z
+            . build/envsetup.sh
+            lunch lineage_mojito-userdebug
+            export ALLOWS_MISSING_DEPENDENCIES="true"
+            make -j16 sepolicy
+      - store_artifacts:
+          path: out/target/product/mojito/ROM_test.zip
+          destination: ROM_test.zip
