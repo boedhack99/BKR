@@ -23,7 +23,7 @@ jobs:
             mkdir android && cd android
             repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android.git -b lineage-18.1 -g default,-device,-mips,-darwin,-notdefault
             git clone https://github.com/boedhack/local_manifest.git --depth=1 -b 11 .repo/local_manifests
-            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j69
+            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc -all)
       - run:
           name: Building
           command: |
@@ -35,7 +35,7 @@ jobs:
             . build/envsetup.sh
             lunch lineage_mojito-userdebug
             export ALLOWS_MISSING_DEPENDENCIES="true"
-            mka bacon -j16
+            mka bacon
       - store_artifacts:
           path: out/target/product/mojito/ROM_test.zip
           destination: ROM_test.zip
