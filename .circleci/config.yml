@@ -1,9 +1,9 @@
 version: 2.1
 jobs:
   build:
+    working_directory: ~/tmp
     docker:
-      - image: fr3akyphantom/droid-builder:latest
-    working_directory: /tmp/rom
+      - image: cimg/android:30.0
     steps:
       - checkout
       - run:
@@ -30,11 +30,6 @@ jobs:
             source build/envsetup.sh
             lunch lineage_mojito-userdebug
             export ALLOWS_MISSING_DEPENDENCIES="true"
-            export CCACHE_DIR=~/ccache/$rom_name/$device
-            export CCACHE_EXEC=$(which ccache)
-            export USE_CCACHE=1
-            ccache -M 20G
-            ccache -z
             mka bacon
       - store_artifacts:
           path: out/target/product/mojito/ROM_test.zip
