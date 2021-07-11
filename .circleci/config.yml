@@ -1,7 +1,6 @@
 version: 2.1
 jobs:
   build:
-    working_directory: ~/tmp
     docker:
       - image: fr3akyphantom/droid-builder:focal
     steps:
@@ -27,7 +26,7 @@ jobs:
       - run:
           name: Building
           command: |
-            source build/envsetup.sh
+            . build/envsetup.sh
             lunch lineage_mojito-userdebug
             export ALLOWS_MISSING_DEPENDENCIES="true"
             mka bacon
