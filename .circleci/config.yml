@@ -27,14 +27,14 @@ jobs:
       - run:
           name: Building
           command: |
+            source build/envsetup.sh
+            lunch lineage_mojito-userdebug
+            export ALLOWS_MISSING_DEPENDENCIES="true"
             export CCACHE_DIR=~/ccache/$rom_name/$device
             export CCACHE_EXEC=$(which ccache)
             export USE_CCACHE=1
             ccache -M 20G
             ccache -z
-            . build/envsetup.sh
-            lunch lineage_mojito-userdebug
-            export ALLOWS_MISSING_DEPENDENCIES="true"
             mka bacon
       - store_artifacts:
           path: out/target/product/mojito/ROM_test.zip
