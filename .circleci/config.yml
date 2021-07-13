@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/tmp
     docker:
-      - image: fr3akyphantom/droid-builder:latest
+      - image: cimg/android:30.0
     steps:
       - checkout
       - run:
