@@ -17,19 +17,24 @@ jobs:
             git config --global user.name "boedhack99"
             git config --global color.ui "true"
             echo "git identity setup successfully!"
+            git clone https://github.com/boedhack99/scripts --depth=1 --single-branch
+            cd scripts
+            sudo -E bash setup/android_build_env.sh
+            sudo -E bash setup/install_android_sdk.sh
       - run:
           name: Cloning repo
           command: |
-            repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android.git -b lineage-18.1 -g default,-device,-mips,-darwin,-notdefault
-            git clone https://github.com/boedhack/local_manifest.git --depth=1 -b 11 .repo/local_manifests
-            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j24
+            repo init --depth=1 --no-repo-verify -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b twrp-11 -g default,-device,-mips,-darwin,-notdefault
+            git clone https://github.com/boedhack99/local_manifest.git --depth=1 -b main .repo/local_manifests
+            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j4
       - run:
           name: Building
           command: |
             . build/envsetup.sh
-            lunch lineage_mojito-userdebug
+            lunch twrp_mojito-eng
             export ALLOWS_MISSING_DEPENDENCIES="true"
-            mka bacon -j12
+            repo sync -j4
+            mka bootimage
       - store_artifacts:
-          path: out/target/product/mojito/ROM_test.zip
-          destination: ROM_test.zip
+          path: out/target/product/mojito/boot.img
+          destination: boot.img
