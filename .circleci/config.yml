@@ -10,6 +10,14 @@ jobs:
           name: Checking Free Space
           command: df -h && echo "Cores = $(nproc --all)" && echo "Ram = $(free -h)"
       - run:
+          name: Download ccache
+          command: |
+            sudo  apt install aria2 ccache gzip pigz rclone -y
+            cd /tmp
+            time aria2c $ccache -x16 -s50
+            time tar xf ccache.tar.gz
+            rm -rf ccache.tar.gz
+      - run:
           name: Building environment
           command: |
             echo "Configuring git"
@@ -31,9 +39,16 @@ jobs:
           name: Building
           command: |
             . build/envsetup.sh
-            lunch lineage_mojito-eng
-            export ALLOWS_MISSING_DEPENDENCIES="true"
+            lunch lineage_mojito-userdebug
+            export ALLOW_MISSING_DEPENDENCIES=true
+            export CCACHE_DIR=/tmp/ccache
+            export CCACHE_EXEC=$(which ccache)
+            export USE_CCACHE=1
+            export ANDROID_JACK_VM_ARGS="-Xmx8g -Dfile.encoding=UTF-8 -XX:+TieredCompilation"
+            ccache -M 20G 
+            ccache -o compression=true
+            ccache -z
             mka bacon -j4
       - store_artifacts:
-          path: out/target/product/mojito/*.zip
-          destination: *.zip
+          path: out/target/product/mojito/lineage-mojito.zip
+          destination: lineage-mojito.zip
