@@ -14,9 +14,9 @@ jobs:
           command: |
             sudo  apt install aria2 ccache gzip pigz rclone -y
             cd /tmp
-            time aria2c $ccache -x16 -s50
-            time tar xf ccache.tar.gz
-            rm -rf ccache.tar.gz
+            #time aria2c $ccache -x16 -s50
+            #time tar xf ccache.tar.gz
+            #rm -rf ccache.tar.gz
       - run:
           name: Building environment
           command: |
