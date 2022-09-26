@@ -48,7 +48,7 @@ jobs:
             ccache -M 20G 
             ccache -o compression=true
             ccache -z
-            make sepolicy -j4
+            make sepolicy
       - store_artifacts:
           path: out/target/product/mojito/lineage-mojito.zip
           destination: lineage-mojito.zip
