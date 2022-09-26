@@ -32,7 +32,7 @@ jobs:
       - run:
           name: Cloning repo
           command: |
-            repo init [--depth=1] [--no-repo-verify] [-u] https://github.com/Evolution-X/manifest -b t iramisu -g default,-device,-mips,-darwin,-notdefault
+            repo init --depth=1 --no-repo-verify -u https://github.com/Evolution-X/manifest -b tiramisu <!-- -g default,-device,-mips,-darwin,-notdefault -->
             git clone https://github.com/boedhack99/local_manifest.git --depth=1 -b fog-13 .repo/local_manifests
             repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j4
       - run:
