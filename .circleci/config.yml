@@ -1,4 +1,4 @@
-yversion: 2.1
+version: 2.1
 jobs:
   build:
     working_directory: ~/tmp/rom
@@ -32,14 +32,14 @@ jobs:
       - run:
           name: Cloning repo
           command: |
-            repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android -b lineage-18.1 -g default,-device,-mips,-darwin,-notdefault
-            git clone https://github.com/boedhack99/local_manifest.git --depth=1 -b R .repo/local_manifests
-            repo sync -c u--no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j4
+            repo init --depth=1 --no-repo-verify -u https://github.com/Evolution-X -b tiramisu -g default,-device,-mips,-darwin,-notdefault
+            git clone https://github.com/boedhack99/local_manifest.git --depth=1 -b fog-13 .repo/local_manifests
+            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j4
       - run:
           name: Building
           command: |
             . build/envsetup.sh
-            lunch lineage_mojito-userdebug
+            lunch evolution_fog-userdebug
             export ALLOW_MISSING_DEPENDENCIES=true
             export CCACHE_DIR=/tmp/ccache
             export CCACHE_EXEC=$(which ccache)
@@ -48,7 +48,7 @@ jobs:
             ccache -M 20G 
             ccache -o compression=true
             ccache -z
-            mka bacon -j4
+            make sepolicy -j4
       - store_artifacts:
           path: out/target/product/mojito/lineage-mojito.zip
           destination: lineage-mojito.zip
